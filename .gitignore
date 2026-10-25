@@ -1,0 +1,7 @@
+/wikiwright
+/data/
+*.db
+*.db-wal
+*.db-shm
+/uploads/
+/agent-tools/

@@ -1,0 +1,20 @@
+[Unit]
+Description=Wikiwright
+After=network.target
+
+[Service]
+Type=simple
+User=wikiwright
+Group=wikiwright
+WorkingDirectory=/var/lib/wikiwright
+ExecStart=/usr/local/bin/wikiwright serve -config /etc/wikiwright/wikiwright.yaml
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/wikiwright
+
+[Install]
+WantedBy=multi-user.target

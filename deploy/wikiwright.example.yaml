@@ -1,0 +1,50 @@
+# Copy to /etc/wikiwright/wikiwright.yaml, or to wikiwright.yaml in the
+# process working directory. Paths are relative to that directory.
+#
+# listen defaults to 127.0.0.1:43123. Put a reverse proxy in front for
+# anything else. Set cookie_secure: true when browsers use HTTPS.
+#
+# secret is reserved and signs nothing today. Session tokens are random
+# and stored in the wiki database.
+#
+# Optional on each wiki:
+#   max_upload: 20971520
+#   upload_types: [png, jpg, jpeg, gif, webp, pdf]
+# Add svg only when browser uploads of SVG should be kept.
+# The default limit is 20 MB. The default types are png, jpg, jpeg, gif, webp, and pdf.
+# logo is a file name inside files/, or a relative path. A path that
+# starts with / or http is ignored.
+# accent is an optional #rrggbb default for the header, sidebar, and borders.
+# An administrator can override it for that wiki at Special:Appearance.
+# Omit it to use pine, #1b3832.
+
+listen: 127.0.0.1:43123
+cookie_secure: false
+secret: change-me
+
+wikis:
+  - id: example
+    name: Example Wiki
+    hosts:
+      - wiki.example.org
+    path_prefix: /w
+    access: public
+    main_page: Main Page
+    license_text: Creative Commons Attribution 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    timezone: UTC
+    sqlite: data/example/wiki.db
+    files: data/example/files
+    project_namespace: Example Wiki
+
+  - id: draft
+    name: Draft Wiki
+    hosts:
+      - draft.example.org
+    path_prefix: /w
+    access: private
+    main_page: Main Page
+    timezone: UTC
+    sqlite: data/draft/wiki.db
+    files: data/draft/files
+    project_namespace: Draft Wiki

@@ -1,0 +1,715 @@
+/* Wikiwright skin. Original layout and icons. */
+
+:root {
+  --ink: #1c1915;
+  --muted: #5c564c;
+  --paper: #f3eee4;
+  --card: #fffdf8;
+  --line: #e3d9c8;
+  --pine: #1b3832;
+  --pine-2: #274941;
+  --foam: #f4efe4;
+  --accent: #1b3832;
+  --accent-ink: #f4efe4;
+  --accent-border: #1b3832;
+  --sidebar-label: #d9c7aa;
+  --copper: #b85c2c;
+  --copper-2: #8d431c;
+  --teal: #0e5c66;
+  --redlink: #8d2e2e;
+  --warn-bg: #f8ecd4;
+  --warn-line: #e2c48a;
+  --bad-bg: #f8e4e0;
+  --bad-line: #e0aaa2;
+  --ok-bg: #e5f0ea;
+  --sans: "Avenir Next", "Segoe UI", sans-serif;
+  --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+  --mono: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+  --sidebar: 16.5rem;
+  --tap: 2.75rem;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body.wikiwright-skin {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.wikiwright-sr,
+.wikiwright-portlet.tools-inline > h3 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.wikiwright-skip {
+  position: absolute;
+  left: 0.75rem;
+  top: -3rem;
+  background: var(--card);
+  color: var(--ink);
+  padding: 0.4rem 0.7rem;
+  z-index: 5;
+}
+.wikiwright-skip:focus { top: 0.5rem; }
+
+.wikiwright-nav-check {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wikiwright-top {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: var(--pine);
+  color: var(--foam);
+  border-bottom: 3px solid var(--accent-border);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.wikiwright-top-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 1.25rem;
+}
+
+.wikiwright-menu {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--tap);
+  padding: 0 0.7rem;
+  border: 1px solid rgba(244, 239, 228, 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.92rem;
+}
+.wikiwright-menu svg { width: 1.15rem; height: 1.15rem; }
+
+.wikiwright-brand {
+  color: var(--foam);
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.wikiwright-brand:hover { color: #fff; }
+
+.wikiwright-search {
+  display: flex;
+  flex: 1;
+  min-width: 8rem;
+  max-width: 28rem;
+  margin-left: auto;
+  background: rgba(255, 253, 248, 0.12);
+  border: 1px solid rgba(244, 239, 228, 0.28);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.wikiwright-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--foam);
+  padding: 0.55rem 0.9rem;
+  font: inherit;
+}
+.wikiwright-search input::placeholder { color: var(--foam); }
+.wikiwright-search button {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 0;
+  background: transparent;
+  color: var(--foam);
+  padding: 0 0.85rem;
+  min-height: var(--tap);
+  font: inherit;
+  cursor: pointer;
+}
+.wikiwright-search button svg { width: 1.05rem; height: 1.05rem; }
+
+.wikiwright-user {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.92rem;
+}
+.wikiwright-user a { color: var(--foam); text-decoration: none; }
+.wikiwright-user a:hover { text-decoration: underline; }
+.wikiwright-user-name { font-weight: 650; }
+
+.wikiwright-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+  width: 100%;
+  min-height: calc(100vh - 3.6rem);
+  margin: 0;
+  align-items: stretch;
+  /* The sidebar column is the accent, flush to the viewport, for the full shell height. */
+  background: linear-gradient(90deg, var(--pine) var(--sidebar), var(--paper) var(--sidebar));
+}
+
+.wikiwright-sidebar {
+  position: sticky;
+  top: 3.6rem;
+  align-self: stretch;
+  min-height: calc(100vh - 3.6rem);
+  max-height: calc(100vh - 3.6rem);
+  overflow: auto;
+  padding: 1rem 0.9rem 2rem 1rem;
+  background: var(--pine);
+  color: var(--foam);
+  container-type: inline-size;
+}
+
+.wikiwright-side-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+  min-width: min(13rem, 100%);
+  max-width: 100%;
+}
+
+.wikiwright-logo { width: 100%; margin: 0 0 0.75rem; }
+.wikiwright-logo-link {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  color: var(--foam);
+  background: transparent;
+  text-decoration: none;
+}
+.wikiwright-logo-link img {
+  display: block;
+  width: auto;
+  max-width: min(100cqi, 100%);
+  max-height: 14rem;
+  height: auto;
+  margin: 0;
+  object-fit: contain;
+  object-position: left top;
+}
+.wikiwright-mark {
+  display: block;
+  width: 8.5rem;
+  height: 8.5rem;
+  max-width: min(100cqi, 100%);
+  margin: 0;
+}
+
+.wikiwright-navbox {
+  width: 0;
+  min-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.7rem 0.85rem 0.35rem;
+  border: 0;
+  border-radius: 0.65rem;
+  background: var(--pine-2);
+  color: var(--foam);
+  text-align: left;
+}
+.wikiwright-navbox .wikiwright-chunk:last-child { margin-bottom: 0; }
+
+.wikiwright-chunk { margin: 0 0 1.15rem; }
+.wikiwright-chunk > h2,
+.wikiwright-sidebar .wikiwright-portlet > h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foam);
+}
+.wikiwright-sidebar a { color: var(--foam); text-decoration: none; }
+.wikiwright-sidebar a:hover { text-decoration: underline; }
+.wikiwright-sidebar ul { list-style: none; margin: 0; padding: 0; }
+.wikiwright-sidebar li { margin: 0.18rem 0; }
+.wikiwright-sidebar .wikiwright-portlet { margin-bottom: 0.8rem; }
+
+.wikiwright-content { min-width: 0; padding: 1.15rem 1.5rem 2.5rem; }
+.wikiwright-tools,
+.wikiwright-article {
+  width: 100%;
+  max-width: 46rem;
+}
+
+.wikiwright-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+.wikiwright-tools ul { display: flex; flex-wrap: wrap; gap: 0.3rem; list-style: none; margin: 0; padding: 0; }
+.wikiwright-tools a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.1rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  color: var(--teal);
+  background: transparent;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+.wikiwright-tools li.selected a,
+.wikiwright-tools a:hover {
+  background: var(--card);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.wikiwright-tools li.new a { color: var(--redlink); }
+
+.wikiwright-article {
+  background: var(--card);
+  border: 2px solid var(--accent-border);
+  border-radius: 0.9rem;
+  padding: 1.35rem 1.5rem 1.6rem;
+  box-shadow: 0 1px 0 rgba(28, 25, 21, 0.03);
+}
+
+.wikiwright-sitesub {
+  margin: 0 0 0.2rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.wikiwright-contentsub { color: var(--muted); font-size: 0.92rem; margin-bottom: 0.6rem; }
+.wikiwright-contentsub:empty { display: none; }
+
+#firstHeading {
+  font-family: var(--serif);
+  font-size: 2.15rem;
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.85rem;
+}
+
+.wikiwright-body {
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  line-height: 1.6;
+  max-width: 40rem;
+}
+.wikiwright-body a { color: var(--teal); }
+.wikiwright-body a.new,
+#catlinks a.new {
+  color: var(--redlink);
+}
+/* Header and sidebar sit on the accent. Missing-page links must not use the paper red. */
+.wikiwright-top,
+.wikiwright-top a,
+.wikiwright-top a:visited,
+.wikiwright-top a.new,
+.wikiwright-sidebar,
+.wikiwright-sidebar a,
+.wikiwright-sidebar a:visited,
+.wikiwright-sidebar a.new {
+  color: var(--foam);
+}
+.wikiwright-body h2,
+.wikiwright-body h3,
+.wikiwright-body h4,
+.wikiwright-body h5,
+.wikiwright-body h6 {
+  font-family: var(--sans);
+  line-height: 1.25;
+  margin: 1.4em 0 0.4em;
+  clear: both;
+}
+.wikiwright-body h2 { font-size: 1.45rem; }
+.wikiwright-body h3 { font-size: 1.2rem; }
+.wikiwright-body p { margin: 0.7em 0; }
+.wikiwright-body ul,
+.wikiwright-body ol { padding-left: 1.3em; }
+.wikiwright-body blockquote {
+  margin: 1em 0 1em 0.2em;
+  padding: 0.15em 0 0.15em 0.9em;
+  border-left: 3px solid var(--accent-border);
+  color: var(--ink);
+}
+.wikiwright-body pre,
+.wikiwright-body code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+.wikiwright-body pre {
+  overflow: auto;
+  padding: 0.75rem 0.9rem;
+  background: var(--paper);
+  border-radius: 0.45rem;
+}
+.wikiwright-body hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 1.4em 0;
+}
+.wikiwright-body img,
+.wikiwright-body iframe { max-width: 100%; height: auto; }
+
+.mw-editsection {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-left: 0.45rem;
+  letter-spacing: 0.02em;
+}
+.mw-editsection a { text-decoration: none; }
+.mw-editsection-bracket { color: var(--muted); }
+
+#toc.toc {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.95rem 0.85rem;
+  margin: 0 0 1.2rem;
+  max-width: 22rem;
+}
+#toc .toctitle { display: flex; align-items: baseline; gap: 0.6rem; }
+#toc h2 { margin: 0; font-size: 0.95rem; }
+#toc ul { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+#toc li { margin: 0.12rem 0; }
+.tocnumber { color: var(--muted); margin-right: 0.25rem; }
+.toctogglelabel {
+  cursor: pointer;
+  color: var(--teal);
+  font-size: 0.82rem;
+}
+.toctogglelabel::before { content: "hide"; }
+.toctogglecheckbox:checked ~ .toctitle .toctogglelabel::before { content: "show"; }
+.toctogglecheckbox:checked ~ ul { display: none; }
+
+.thumb {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 0.35rem;
+  margin: 0.4rem 0 0.8rem;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+.thumbinner { display: inline-block; max-width: 100%; }
+.thumbcaption { margin-top: 0.3rem; color: var(--muted); }
+.tright, .floatright { float: right; clear: right; margin-left: 1rem; }
+.tleft, .floatleft { float: left; clear: left; margin-right: 1rem; }
+.center { text-align: center; clear: both; }
+.floatnone { display: inline-block; }
+
+.wikiwright-video { margin: 0.6rem 0; max-width: 100%; }
+.wikiwright-video iframe { border: 0; background: #111; max-width: 100%; }
+.wikiwright-video.center { text-align: center; }
+
+table.wikitable,
+table.wikiwright-history,
+table.diff {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  margin: 0.8rem 0 1rem;
+}
+table.wikitable th,
+table.wikitable td,
+table.wikiwright-history th,
+table.wikiwright-history td,
+table.diff td {
+  border: 1px solid var(--line);
+  padding: 0.4rem 0.55rem;
+  vertical-align: top;
+}
+table.wikitable th,
+table.wikiwright-history th { background: var(--paper); text-align: left; }
+.diff-deletedline { background: #f8e4e0; }
+.diff-addedline { background: #e5f0ea; }
+.diff-marker { width: 1.2rem; color: var(--muted); text-align: center; }
+
+#catlinks.catlinks {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  margin-top: 1.4rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+#catlinks ul { display: inline; margin: 0; padding: 0; }
+#catlinks li { display: inline; }
+#catlinks li::after { content: " · "; color: var(--muted); }
+#catlinks li:last-child::after { content: ""; }
+
+.wikiwright-warning {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  border-radius: 0.25rem;
+  padding: 0 0.25em;
+  font-family: var(--sans);
+  font-size: 0.9em;
+}
+.wikiwright-notice,
+.previewnote {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.8rem;
+  margin: 0.6rem 0;
+  font-family: var(--sans);
+}
+.wikiwright-error {
+  background: var(--bad-bg);
+  border: 1px solid var(--bad-line);
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.8rem;
+  margin: 0.6rem 0;
+  font-family: var(--sans);
+}
+.wikiwright-muted { color: var(--muted); }
+.wikiwright-plain { list-style: none; padding-left: 0; }
+.wikiwright-plain li { margin: 0.28rem 0; }
+.wikiwright-search-hit { margin: 0.7rem 0; }
+.minoredit { color: var(--muted); font-size: 0.85em; }
+
+.wikiwright-print { color: var(--muted); font-size: 0.82rem; margin: 1.2rem 0 0; }
+.noarticletext { color: var(--muted); }
+
+.fullImageLink img { max-width: 100%; height: auto; }
+.fullMedia { font-family: var(--sans); margin-bottom: 0.8rem; }
+
+.mw-editform, .wikiwright-login { font-family: var(--sans); max-width: 46rem; }
+textarea#wpTextbox1 {
+  width: 100%;
+  min-height: 22rem;
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  padding: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: #fff;
+  color: var(--ink);
+}
+.mw-editform label,
+.wikiwright-login label { display: block; margin-top: 0.7rem; font-size: 0.92rem; }
+.mw-editform input[type="text"],
+.mw-editform input[type="password"],
+.wikiwright-login input[type="text"],
+.wikiwright-login input[type="password"],
+#wpSummary {
+  width: 100%;
+  max-width: 32rem;
+  min-height: var(--tap);
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  font: inherit;
+  background: #fff;
+}
+.editCheckboxes { margin: 0.7rem 0; }
+.editCheckboxes span { margin-right: 1rem; }
+#editpage-copywarn { color: var(--muted); font-size: 0.88rem; }
+.editButtons, .wikiwright-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-top: 0.6rem; }
+.editButtons input,
+.wikiwright-form-actions button,
+.wikiwright-login button {
+  min-height: var(--tap);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+#wpSave,
+.wikiwright-form-actions button[type="submit"] {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: #fff;
+}
+#wpSave:hover,
+.wikiwright-form-actions button[type="submit"]:hover { background: var(--copper-2); }
+.cancelLink a { color: var(--redlink); padding: 0.4rem; }
+.editHelp { color: var(--muted); font-size: 0.88rem; }
+
+.wikiwright-footer {
+  border-top: 1px solid var(--line);
+  background: #efe8db;
+}
+.wikiwright-footer ul {
+  margin: 0;
+  padding: 1rem 1.5rem 1.4rem calc(var(--sidebar) + 1.5rem);
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+.wikiwright-footer a { color: var(--teal); }
+
+.wikiwright-directory {
+  max-width: 40rem;
+  margin: 2.5rem auto;
+  padding: 0 1.25rem 3rem;
+  font-family: var(--sans);
+}
+.wikiwright-directory h1 { font-family: var(--serif); }
+
+.wikiwright-appearance fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+.wikiwright-appearance fieldset:disabled { opacity: 1; color: var(--ink); }
+.wikiwright-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.4rem;
+  margin: 0.8rem 0 1rem;
+}
+.wikiwright-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+  width: 4.5rem;
+  font-size: 0.78rem;
+  text-align: center;
+  cursor: pointer;
+}
+.wikiwright-appearance fieldset:disabled .wikiwright-swatch { cursor: default; }
+.wikiwright-swatch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.wikiwright-swatch span {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(28, 25, 21, 0.35);
+}
+.wikiwright-swatch input:checked + span,
+.wikiwright-swatch.is-current span {
+  box-shadow: 0 0 0 3px var(--ink);
+}
+.wikiwright-swatch input:focus-visible + span {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+.wikiwright-swatch-custom {
+  background: conic-gradient(#c23b3b, #d8a017, #2f8f4e, #1a6f9a, #4a2c5a, #c23b3b);
+}
+.wikiwright-appearance input[type="color"] {
+  width: 3.4rem;
+  height: var(--tap);
+  padding: 0.15rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: #fff;
+  vertical-align: middle;
+}
+.wikiwright-accent-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border-radius: 0.7rem;
+  background: var(--pine);
+  color: var(--foam);
+  border: 3px solid var(--accent-border);
+}
+.wikiwright-accent-preview a {
+  color: var(--teal);
+  background: var(--paper);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+}
+.wikiwright-contrast {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.4rem;
+  margin: 0.4rem 0 0.8rem;
+}
+.wikiwright-contrast div { min-width: 8rem; }
+.wikiwright-contrast dt { font-size: 0.78rem; color: var(--muted); }
+.wikiwright-contrast dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 650; }
+
+@media (max-width: 52rem) {
+  .wikiwright-menu { display: inline-flex; }
+  .wikiwright-top-inner { flex-wrap: wrap; }
+  .wikiwright-brand { flex: 1; }
+  .wikiwright-search { order: 5; flex: 1 1 100%; max-width: none; }
+  .wikiwright-user { gap: 0.65rem; }
+  .wikiwright-shell { display: block; width: auto; min-height: 0; background: none; }
+  .wikiwright-footer ul { padding-left: 1.25rem; }
+  .wikiwright-tools,
+  .wikiwright-article { max-width: none; }
+  .wikiwright-sidebar {
+    display: none;
+    position: static;
+    max-height: none;
+    background: var(--pine);
+    border-radius: 0 0 0.8rem 0.8rem;
+    margin: 0 0.6rem;
+  }
+  .wikiwright-nav-check:checked ~ .wikiwright-shell .wikiwright-sidebar { display: block; }
+  .wikiwright-content { padding: 0.75rem 0.7rem 2rem; }
+  .wikiwright-article { padding: 1rem 0.9rem 1.2rem; border-radius: 0.7rem; }
+  .wikiwright-side-col { width: 100%; min-width: 0; max-width: none; align-items: stretch; }
+  .wikiwright-logo-link {
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 0;
+  }
+  .wikiwright-logo-link img { width: auto; max-width: 100%; max-height: 9rem; margin: 0; }
+  .wikiwright-mark { width: 7rem; height: 7rem; max-width: 100%; margin: 0; }
+  .wikiwright-navbox { width: 100%; min-width: 0; }
+  #firstHeading { font-size: 1.7rem; }
+  .wikiwright-body { font-size: 1.05rem; }
+  .tright, .tleft, .floatright, .floatleft {
+    float: none;
+    display: block;
+    margin: 0.6rem 0;
+    max-width: 100%;
+  }
+  #toc.toc { max-width: none; }
+  .wikiwright-tools a { min-height: var(--tap); }
+}
+
+@media print {
+  .wikiwright-top, .wikiwright-sidebar, .wikiwright-tools, .wikiwright-footer, .mw-editsection, .wikiwright-menu { display: none !important; }
+  body.wikiwright-skin { background: #fff; }
+  .wikiwright-article { border: 0; box-shadow: none; }
+}

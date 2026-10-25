@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.HTMLTitle}}</title>
+<link rel="stylesheet" href="{{.Stylesheet}}">
+{{.HeadExtra}}
+</head>
+<body class="{{.BodyClass}}">
+<a class="wikiwright-skip" href="#content">Skip to content</a>
+<input type="checkbox" id="wikiwright-nav-toggle" class="wikiwright-nav-check">
+<header class="wikiwright-top" id="wikiwright-top">
+<div class="wikiwright-top-inner">
+<label for="wikiwright-nav-toggle" class="wikiwright-menu">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+<span>Menu</span>
+</label>
+<a class="wikiwright-brand" href="{{.MainHref}}">{{.SiteName}}</a>
+<form class="wikiwright-search" action="{{.SearchAction}}" role="search">
+<label class="wikiwright-sr" for="wikiwright-search-input">{{.SearchPlaceholder}}</label>
+<input type="search" name="search" id="wikiwright-search-input" placeholder="{{.SearchPlaceholder}}" value="{{.SearchQuery}}" accesskey="f">
+<input type="hidden" name="title" value="Special:Search">
+<button type="submit">
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+<span>Search</span>
+</button>
+</form>
+<nav class="wikiwright-user" aria-label="Account">{{.Personal}}</nav>
+</div>
+</header>
+<div class="wikiwright-shell" id="wikiwright-shell">
+<aside class="wikiwright-sidebar" id="wikiwright-sidebar">
+<div class="wikiwright-side-col">
+<div class="wikiwright-logo">{{.Logo}}</div>
+<div class="wikiwright-navbox">
+{{.Sidebar}}
+<div class="wikiwright-chunk">
+{{.Toolbox}}
+</div>
+{{.CatSidebar}}
+</div>
+</div>
+</aside>
+<div class="wikiwright-content">
+<nav class="wikiwright-tools" aria-label="Page tools">
+{{.Namespaces}}
+{{.Views}}
+{{.PageTools}}
+</nav>
+<article id="content" class="wikiwright-article">
+<p class="wikiwright-sitesub">{{.SiteSub}}</p>
+<h1 id="firstHeading">{{.Heading}}</h1>
+<div class="wikiwright-contentsub">{{.ContentSub}}</div>
+{{.Notices}}
+<div class="wikiwright-body" id="bodyContent" lang="en" dir="ltr">
+{{.Body}}
+</div>
+<p class="wikiwright-print">{{.PrintFooter}}</p>
+{{.Catlinks}}
+</article>
+</div>
+</div>
+<footer class="wikiwright-footer" role="contentinfo">
+<ul>{{.Footer}}</ul>
+</footer>
+</body>
+</html>
