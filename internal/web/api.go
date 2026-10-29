@@ -749,6 +749,11 @@ func (s *Site) apiUpload(w http.ResponseWriter, r *http.Request) {
 		s.apiErr(w, "filetype-banned", "That file type is not allowed. Allowed types: "+s.uploadAcceptLabel()+".")
 		return
 	}
+	name, err = ingest.ResolveUploadName(s.Store, s.Cfg.Files, name, true)
+	if err != nil {
+		s.apiErr(w, "internalerror", "Could not check whether that file already exists.")
+		return
+	}
 	exists, err := s.uploadTargetExists(name)
 	if err != nil {
 		s.apiErr(w, "internalerror", "Could not check whether that file already exists.")

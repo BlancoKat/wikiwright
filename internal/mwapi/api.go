@@ -543,6 +543,13 @@ func takeFile(ctx context.Context, opt Options, st *store.Store, job fileJob, lo
 		logf("api: skip file %s: %v", name, ctx.Err())
 		return 0, 0, 1
 	}
+	// A file stored under a different first-letter case lives at that name on disk.
+	if existing, err := st.File(name); err != nil {
+		logf("api: skip file %s: %v", name, err)
+		return 0, 0, 1
+	} else if existing.Name != "" {
+		name = existing.Name
+	}
 	disk := filepath.Join(opt.FilesDir, name)
 	if fi, err := os.Stat(disk); err == nil && fi.Mode().IsRegular() && fi.Size() > 0 {
 		f, err := st.File(name)

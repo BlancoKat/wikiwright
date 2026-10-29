@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
 	_ "modernc.org/sqlite"
 )
@@ -781,7 +783,80 @@ func (s *Store) File(name string) (FileRec, error) {
 	if err != nil || f.Name != "" {
 		return f, err
 	}
-	return s.fileByName(strings.ReplaceAll(spaced, " ", "_"))
+	f, err = s.fileByName(strings.ReplaceAll(spaced, " ", "_"))
+	if err != nil || f.Name != "" {
+		return f, err
+	}
+	// File: titles capitalize the first letter, but files stored before that
+	// rule (or imported with the original spelling) keep their case. Match
+	// those without treating the rest of the name as case-insensitive.
+	return s.fileByFirstLetter(spaced)
+}
+
+func (s *Store) fileByFirstLetter(want string) (FileRec, error) {
+	rows, err := s.DB.Query(`SELECT name, mime, size, width, height, uploaded_by, uploaded_at, description FROM files`)
+	if err != nil {
+		return FileRec{}, err
+	}
+	defer rows.Close()
+	var match FileRec
+	for rows.Next() {
+		f, err := scanFile(rows)
+		if err != nil {
+			return FileRec{}, err
+		}
+		if !fileNameFoldEqual(f.Name, want) {
+			continue
+		}
+		if match.Name == "" || preferFoldedName(f.Name, match.Name) {
+			match = f
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return FileRec{}, err
+	}
+	return match, nil
+}
+
+// SameFileName reports whether two file names are the same MediaWiki file.
+// Spaces and underscores match, and only the first letter is case-insensitive.
+func SameFileName(a, b string) bool {
+	return fileNameFoldEqual(a, b)
+}
+
+// fileNameFoldEqual reports whether two file names are the same MediaWiki
+// file: spaces and underscores match, and only the first letter is
+// case-insensitive. The remainder, including the extension, is exact.
+func fileNameFoldEqual(stored, want string) bool {
+	a := strings.ReplaceAll(stored, "_", " ")
+	b := strings.ReplaceAll(want, "_", " ")
+	ar, asize := utf8.DecodeRuneInString(a)
+	br, bsize := utf8.DecodeRuneInString(b)
+	if asize == 0 || bsize == 0 {
+		return false
+	}
+	if unicode.ToUpper(ar) != unicode.ToUpper(br) {
+		return false
+	}
+	return a[asize:] == b[bsize:]
+}
+
+// preferFoldedName reports whether candidate should win over current when
+// several stored names fold to one title. A name that already has an
+// uppercase first letter matches the File: title.
+func preferFoldedName(candidate, current string) bool {
+	if foldedCanonical(candidate) != foldedCanonical(current) {
+		return foldedCanonical(candidate)
+	}
+	return candidate < current
+}
+
+func foldedCanonical(name string) bool {
+	r, size := utf8.DecodeRuneInString(name)
+	if size == 0 {
+		return false
+	}
+	return r == unicode.ToUpper(r)
 }
 
 func scanFile(sc interface{ Scan(...any) error }) (FileRec, error) {

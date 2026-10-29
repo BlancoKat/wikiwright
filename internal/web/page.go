@@ -1063,6 +1063,11 @@ func (s *Site) handleUpload(w http.ResponseWriter, r *http.Request) {
 			s.writeSpecial(w, r, "Upload file", `<div class="wikiwright-error">`+esc(msg)+`</div>`+string(s.uploadForm(sess, r.FormValue("wpDestFile"), "")))
 			return
 		}
+		name, err = ingest.ResolveUploadName(s.Store, s.Cfg.Files, name, true)
+		if err != nil {
+			s.fail(w, r, http.StatusInternalServerError, "Could not check whether that file already exists.")
+			return
+		}
 		exists, err := s.uploadTargetExists(name)
 		if err != nil {
 			s.fail(w, r, http.StatusInternalServerError, "Could not check whether that file already exists.")
