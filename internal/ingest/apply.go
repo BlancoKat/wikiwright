@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 	"runtime/debug"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"golang.org/x/image/webp"
 
@@ -215,16 +217,20 @@ func Images(st *store.Store, srcDir, destDir string) (int, error) {
 // SVG is rejected here. Imports use SaveImported so a diagram from the
 // source wiki, including a Wikimedia Commons SVG, can still be served.
 func SaveUpload(st *store.Store, destDir, name string, r io.Reader, max int64, user, desc string) (store.FileRec, error) {
-	return saveStored(st, destDir, name, r, max, user, desc, false)
+	return saveStored(st, destDir, name, r, max, user, desc, false, true)
 }
 
 // SaveImported is SaveUpload plus SVG, for files copied from a wiki rather than a browser upload.
 func SaveImported(st *store.Store, destDir, name string, r io.Reader, max int64, user, desc string) (store.FileRec, error) {
-	return saveStored(st, destDir, name, r, max, user, desc, true)
+	return saveStored(st, destDir, name, r, max, user, desc, true, false)
 }
 
-func saveStored(st *store.Store, destDir, name string, r io.Reader, max int64, user, desc string, allowSVG bool) (store.FileRec, error) {
-	name = CleanName(name)
+func saveStored(st *store.Store, destDir, name string, r io.Reader, max int64, user, desc string, allowSVG, canonicalize bool) (store.FileRec, error) {
+	var err error
+	name, err = ResolveUploadName(st, destDir, name, canonicalize)
+	if err != nil {
+		return store.FileRec{}, err
+	}
 	if name == "" {
 		return store.FileRec{}, fmt.Errorf("missing file name")
 	}
@@ -287,6 +293,109 @@ func RecordExisting(st *store.Store, destDir, name, user, mime string, w, h int)
 	}
 	rec.UploadedBy = user
 	return st.UpsertFile(rec)
+}
+
+// ResolveUploadName chooses the name to store for an upload.
+// A file already recorded under the same name, aside from the first letter's
+// case or spaces versus underscores, keeps that stored name so a re-upload
+// replaces it. When canonicalize is set and nothing is stored yet, the first
+// letter is uppercased so the database row, the file on disk, and the File:
+// title agree. A file already on disk under that name, including a different
+// first letter, is kept too. Imports pass canonicalize false so a new source
+// name is stored as given.
+func ResolveUploadName(st *store.Store, destDir, name string, canonicalize bool) (string, error) {
+	name = CleanName(name)
+	if name == "" {
+		return "", nil
+	}
+	if st != nil {
+		f, err := st.File(name)
+		if err != nil {
+			return "", err
+		}
+		if f.Name != "" {
+			return f.Name, nil
+		}
+	}
+	if destDir != "" {
+		diskName, ok, err := foldedDiskName(destDir, name)
+		if err != nil {
+			return "", err
+		}
+		if ok {
+			return diskName, nil
+		}
+	}
+	if canonicalize {
+		return upperFirst(name), nil
+	}
+	return name, nil
+}
+
+// foldedDiskName returns a file already in destDir under the same name,
+// ignoring first-letter case and spaces versus underscores.
+func foldedDiskName(destDir, name string) (string, bool, error) {
+	exact := filepath.Join(destDir, filenameOnDisk(name))
+	ok, err := regularFile(exact)
+	if err != nil {
+		return "", false, err
+	}
+	if ok {
+		return name, true, nil
+	}
+	entries, err := os.ReadDir(destDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", false, nil
+		}
+		return "", false, err
+	}
+	var match string
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		n := e.Name()
+		if !store.SameFileName(n, name) {
+			continue
+		}
+		if match == "" || betterDiskName(n, match) {
+			match = n
+		}
+	}
+	if match == "" {
+		return "", false, nil
+	}
+	return match, true, nil
+}
+
+func betterDiskName(candidate, current string) bool {
+	cUp := candidate == upperFirst(candidate)
+	uUp := current == upperFirst(current)
+	if cUp != uUp {
+		return cUp
+	}
+	return candidate < current
+}
+
+func regularFile(path string) (bool, error) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return fi.Mode().IsRegular(), nil
+}
+
+// upperFirst matches title capitalization: one rune, Unicode simple upper case.
+func upperFirst(s string) string {
+	r, size := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError && size <= 1 && s == "" {
+		return s
+	}
+	return string(unicode.ToUpper(r)) + s[size:]
 }
 
 // CleanName strips any path and rejects odd characters.
